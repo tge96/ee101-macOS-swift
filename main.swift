@@ -28,8 +28,8 @@ func EE101Text(_ channel: UInt8, text: String) {
     let eop : [UInt8] = [0x00]
 
     do {
-        let myDataToSend: Data = Data(_: cht)
-        var _ = try serialPort.writeData(myDataToSend)
+        let myHeaderToSend: Data = Data(_: cht)
+        var _ = try serialPort.writeData(myHeaderToSend)
         var _ = try serialPort.writeString(text)
         let myEOPToSend: Data = Data(_: eop)
         let _ = try serialPort.writeData(myEOPToSend)
@@ -41,17 +41,18 @@ func EE101Text(_ channel: UInt8, text: String) {
 func EE101Value(_ channel: UInt8, value: Int32) {
     let EE101_SYNC: UInt8 = 0x50
     let EE101_VALUE_TYPE: UInt8 = 0x80
-    let chv: UInt8 = (channel & 0x07) | EE101_SYNC | EE101_VALUE_TYPE
-/*     print(channel)
-    print(EE101_SYNC)
-    print(EE101_VALUE_TYPE)
-    print(chv)
-    print(value) */
-/*     let vr0 = try serialPort.writeData(bytes([(int(channel) & 0x07) | EE101_SYNC | EE101_VALUE_TYPE]))
-    let vr1 = try serialPort.writeData(bytes([(int(value >> 24))]))
-    let vr2 = try serialPort.writeData(bytes([(int(value >> 16))]))
-    let vr3 = try serialPort.writeData(bytes([(int(value >> 8))]))
-    let vr4 = try serialPort.writeData(bytes([(int(value) & 0xFF)])) */
+    let chv : [UInt8] = [(channel & 0x07) | EE101_SYNC | EE101_VALUE_TYPE]
+    let val : [UInt8] = [UInt8(value >> 24), UInt8(value >> 16), UInt8(value >> 8), UInt8(value & 0xFF)]
+
+    do {
+        let myHeaderToSend1: Data = Data(_: chv)
+        var _ = try serialPort.writeData(myHeaderToSend1)
+        let myValToSend: Data = Data(_: val)
+        let _ = try serialPort.writeData(myValToSend)
+    } catch {
+        print("Error: \(error)")
+    }
+
 }
 
 do {
@@ -69,15 +70,19 @@ do {
 
     print("Press CTL+C to exit program")
     
-    print("Sending: ", terminator:"")
-/*     print(testBinaryArray.map { String($0, radix: 16, uppercase: false) })
+/*     print("Sending: ", terminator:"")
+    print(testBinaryArray.map { String($0, radix: 16, uppercase: false) })
 
     let dataToSend: Data = Data(_: testBinaryArray)
 
     let bytesWritten = try serialPort.writeData(dataToSend)
 
     print("Successfully wrote \(bytesWritten) bytes") */
+    var i = 10
+    var bo: Bool = true
     
+    repeat {
+
         EE101Text(0, text: "Hello")
         EE101Text(1, text: "Tim")
         EE101Text(2, text: "this")
@@ -87,15 +92,21 @@ do {
         EE101Text(6, text: "ported to")
         EE101Text(7, text: "Swift v5 on macOS")
 
-/*         EE101Value(0, value: 500)
+        EE101Value(0, value: 500)
         EE101Value(1, value: 600)
         EE101Value(2, value: 700)
         EE101Value(3, value: 800)
         EE101Value(4, value: 9000)
         EE101Value(5, value: 10000)
         EE101Value(6, value: 20000)
-        EE101Value(7, value: 30000) */
+        EE101Value(7, value: 30000)
 
+        i -= 1
+        if(i < 1) {
+            bo = false
+        }
+
+    } while bo
 
     print("End of example");
 
