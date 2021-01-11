@@ -10,8 +10,6 @@
 import Foundation
 import SwiftSerial
 
-let testBinaryArray : [UInt8] = [0x55, 0xFF, 0x55, 0xFF, 0x55]
-
 let arguments = CommandLine.arguments
 guard arguments.count >= 2 else {
     print("Need serial port name, e.g. /dev/cu.usbserialXYZ as the first argument.")
@@ -68,7 +66,7 @@ do {
                            transmitRate: .baud9600,
                            minimumBytesToRead: 1)
 
-    var i = 10
+    var i: Int32 = 10
     var bo: Bool = true
     
     repeat {
@@ -82,14 +80,14 @@ do {
         EE101Text(6, text: "ported to")
         EE101Text(7, text: "Swift v5 on macOS")
 
-        EE101Value(0, value: 500)
-        EE101Value(1, value: 600)
-        EE101Value(2, value: 700)
-        EE101Value(3, value: 800)
-        EE101Value(4, value: 9000)
-        EE101Value(5, value: 10000)
-        EE101Value(6, value: 20000)
-        EE101Value(7, value: 30000)
+        EE101Value(0, value: i)
+        EE101Value(1, value: i)
+        EE101Value(2, value: i)
+        EE101Value(3, value: i)
+        EE101Value(4, value: i)
+        EE101Value(5, value: i)
+        EE101Value(6, value: i)
+        EE101Value(7, value: i)
 
         i -= 1
         if(i < 1) {
@@ -98,10 +96,8 @@ do {
 
     } while bo
 
-    print("End of example");
-
 } catch PortError.failedToOpen {
-    print("Serial port \(portName) failed to open. You might need root permissions.")
+    print("Serial port \(portName) failed to open.")
 } catch {
     print("Error: \(error)")
 }
