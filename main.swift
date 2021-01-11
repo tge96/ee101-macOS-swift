@@ -68,16 +68,6 @@ do {
                            transmitRate: .baud9600,
                            minimumBytesToRead: 1)
 
-    print("Press CTL+C to exit program")
-    
-/*     print("Sending: ", terminator:"")
-    print(testBinaryArray.map { String($0, radix: 16, uppercase: false) })
-
-    let dataToSend: Data = Data(_: testBinaryArray)
-
-    let bytesWritten = try serialPort.writeData(dataToSend)
-
-    print("Successfully wrote \(bytesWritten) bytes") */
     var i = 10
     var bo: Bool = true
     
